@@ -20,7 +20,7 @@ while True:
 然后在进入break之后的任何一个分支时，进行额外的检查。如果break已经发生，则这个分支不执行，跳转到循环尾部结束循环。就像这样：
 ```py
 a = 0
-__ol_loop = False
+__ol_break = False
 while True and not __ol_break:
     a+=1
     if a==5:
