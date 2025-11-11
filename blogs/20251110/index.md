@@ -45,9 +45,10 @@ lambda b: [
   ...
   ```
 
-## 优化？
+## continue优化？
 优化路漫漫，最核心的思路就是变换分支结构，使得辅助变量`__ol_*`出现的次数最少。
 
+### 临时变量？
 我们看这样的例子：
 ```py
 if condition:
@@ -64,6 +65,8 @@ if condition:
 if not jump:
     # 分支2
 ```
+
+### 移动分支？
 引入临时变量显然会导致产物膨胀，我们可以通过改变分支结构来避免跳转，从而避免引入临时变量吗？答案是肯定的  
 ```py
 if condition:
@@ -168,5 +171,41 @@ elif condition:
 else:
    # 分支0.x
 ```
+从另一个角度来看，continue本质上是一条去往循环末尾的路径。
+如果能通过变换，把continue移动到循环的末尾，也就成功地消除了continue。
+
+### 最坏的情况？
+对于这样的情形：
+```py
+if condition1:
+    # 分支1
+elif condition2:
+    # 分支2
+    continue
+elif condition3:
+    # 分支3
+elif condition4:
+    # 分支4
+elif condition5:
+    # 分支5
+# 分支6
+```
+似乎是“最坏的情况”，但真的是这样吗？  
+```py
+if condition1:
+    # 分支1
+    # 分支6
+elif condition2:
+    # 分支2
+else:
+    if condition3:
+        # 分支3
+    elif condition4:
+        # 分支4
+    elif condition5:
+        # 分支5
+    # 分支6
+```
+你看，虽然4个“非continue分支”，但是我们只复制了2份分支6。
 
 
