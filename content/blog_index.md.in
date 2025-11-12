@@ -1,0 +1,32 @@
+{#- 这是用于生成 blog_index.md 的jinja2模板。请忽略下一条注释。 -#}
+<!-- 
+    此文件由程序自动生成
+    由以下两个文件控制： 
+    - tools/build_blog_index.py
+    - content/blog_index.md.in
+    
+    请勿直接修改此文件。
+-->
+
+# 博客目录
+{% for year in grouped_posts %}
+{{ year }}年
+---
+{% for month in grouped_posts[year] %}
+{{ month }}月
+---
+
+{% for data in grouped_posts[year][month] -%}
+{% if data.title is defined and data.title is none -%}
+    {% set title = "无标题" -%}
+{% else -%}
+    {% set title = data.title -%}
+{% endif -%}
+
+### [{{ title }}](/blogs/{{ data.name }})
+*{{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*
+
+---
+{% endfor %}
+{% endfor %}
+{% endfor %}
