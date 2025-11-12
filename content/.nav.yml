@@ -1,0 +1,5 @@
+nav:
+  - 主页: index.md
+  - 博客:
+    - 博客目录: blog_index.md
+    - 文章列表: blogs/

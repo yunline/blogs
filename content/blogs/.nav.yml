@@ -1,0 +1,4 @@
+flatten_single_child_sections: true
+sort:
+  by: path
+  direction: desc
