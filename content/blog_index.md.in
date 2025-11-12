@@ -23,7 +23,7 @@
     {% set title = data.title -%}
 {% endif -%}
 
-### [{{ title }}](/blogs/{{ data.name }})
+### [{{ title }}](blogs/{{ data.name }}/index.md)
 *{{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*
 
 ---
