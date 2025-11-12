@@ -8,7 +8,7 @@ import warnings
 import jinja2
 
 BLOGS_PATH = "content/blogs/"
-OUTPUT_PATH = "content/blog_index.md"
+OUTPUT_PATH = "content/blogs/index.md"
 TEMPLATE_PATH = OUTPUT_PATH + ".in"
 H1_PATTERN = re.compile(
     r"^#[^\S\r\n]+(?P<title>(\S+[^\S\r\n]*)+)\n",

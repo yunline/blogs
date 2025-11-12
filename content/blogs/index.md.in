@@ -3,7 +3,7 @@
     此文件由程序自动生成
     由以下两个文件控制： 
     - tools/build_blog_index.py
-    - content/blog_index.md.in
+    - content/blogs/index.md.in
     
     请勿直接修改此文件。
 -->
@@ -23,7 +23,7 @@
     {% set title = data.title -%}
 {% endif -%}
 
-### [{{ title }}](blogs/{{ data.name }}/index.md)
+### [{{ title }}]({{ data.name }}/index.md)
 *:material-clock-time-four-outline: {{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*
 
 ---
