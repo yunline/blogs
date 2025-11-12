@@ -1,0 +1,38 @@
+site_name: Blogs
+site_url: !ENV [SITE_URL, 'http://localhost:8000']
+
+docs_dir: blogs
+
+theme: 
+  name: material
+  features:
+    # 支持一键复制代码
+    - content.code.copy
+    - navigation.expand
+  
+extra_javascript:
+  # 支持latex公式
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js
+
+markdown_extensions:
+  # 支持在html标签里写markdown
+  # （需要在html标签里添加 markdown="1"属性）
+  - markdown.extensions.md_in_html
+
+  # 支持删除线
+  - pymdownx.tilde 
+
+  # 支持latex公式
+  - pymdownx.arithmatex: 
+      generic: true
+  
+  # 支持代码高亮
+  - pymdownx.highlight:
+      anchor_linenums: true
+
+  - pymdownx.superfences:
+      # 支持mermaid导图
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
