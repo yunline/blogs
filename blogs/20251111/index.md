@@ -87,34 +87,36 @@ graph TD
 反之则不行（需要添加额外的辅助变量）。
 
 结合例A来看：
+
 - 对c进行分析
-- - c --> Q --> R
-- - c --> R
+    - c --> Q --> R
+    - c --> R
 - 对b进行分析
-- - b --> c --> R
-- - b --> P --> R
+    - b --> c --> R
+    - b --> P --> R
 - 对a进行分析
-- - a --> b --> R --> Exit
-- - a --> O --> Exit
+    - a --> b --> R --> Exit
+    - a --> O --> Exit
 
 每一个节点的每一条汇聚路径都相互独立，所以这个流程图可以用纯if-else树表示
 
 再看例B:
+
 - 对c进行分析
-- - c --> Q --> R
-- - c --> R
+    - c --> Q --> R
+    - c --> R
 - 对b进行分析
-- - b --> c --> **R --> Exit**
-- - b --> P --> Exit
+    - b --> c --> **R --> Exit**
+    - b --> P --> Exit
 - 对a进行分析
-- - a --> b --> Exit
-- - a --> O --> **R --> Exit**
+    - a --> b --> Exit
+    - a --> O --> **R --> Exit**
 
 可以看到，a的一个分支经过b，从而经过了`R --> Exit`，而a的另一个分支也经过了`R --> Exit`。两条路径重合了。所以这个流程图可以不能用纯if-else树表示
 
 听起来像依然缺乏说服力，对吗？看来准确的证明更能说服人一些。  
 ~~可惜这里空间太小~~
-<details>
+<details markdown="1">
 
 <summary>
 证明过程（由d老师赞助播出）：
@@ -122,7 +124,7 @@ graph TD
 
 **Prompt:**
 
-<blockquote>
+<blockquote  markdown="1">
 
 有办法证明下面这个定理吗
 
@@ -136,7 +138,7 @@ graph TD
 
 **d老师:**
 
-<blockquote>
+<blockquote  markdown="1">
 
 好的，我们先明确一下你的问题，然后一步步推理并尝试证明。
 
