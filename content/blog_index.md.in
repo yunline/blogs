@@ -24,7 +24,7 @@
 {% endif -%}
 
 ### [{{ title }}](blogs/{{ data.name }}/index.md)
-*{{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*
+*:material-clock-time-four-outline: {{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*
 
 ---
 {% endfor %}
