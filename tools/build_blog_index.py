@@ -91,6 +91,7 @@ for name in os.listdir(BLOGS_PATH):
 
     posts.append(Data(name, title, date, tags))
 
+# 按照日期排序，日期早的排名靠前
 sorted_posts = sorted(posts, key=lambda a: a.date, reverse=True)
 
 grouped_by_timeline: dict[int, dict[int, list[Data]]] = {}
@@ -107,6 +108,14 @@ for data in sorted_posts:
             grouped_by_tag[tag_slug][1].append(data)
         else:
             grouped_by_tag[tag_slug] = (tag_name, [data])
+
+# 按照tag的引用次数排序，引用次数最多的排名靠前
+grouped_by_tag = {
+    key: value
+    for key, value in sorted(
+        grouped_by_tag.items(), key=lambda a: len(a[1][1]), reverse=True
+    )
+}
 
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_PATH))
 
