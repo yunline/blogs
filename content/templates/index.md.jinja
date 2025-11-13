@@ -1,0 +1,28 @@
+---
+title: 博客目录-按时间分类
+---
+{# 这是用于生成 blogs/index.md 的jinja2模板。请忽略下一条注释。 #}
+<!-- 
+    此文件由程序自动生成
+    由以下两个文件控制： 
+    - tools/build_blog_index.py
+    - content/templates/index.md.jinja
+    
+    请勿直接修改此文件。
+-->
+
+{% from "list_posts.jinja" import list_posts %}
+
+# 博客目录
+
+{% for year in grouped_posts %}
+{{ year }}年
+---
+{% for month in grouped_posts[year] %}
+{{ month }}月
+---
+
+{{ list_posts(grouped_posts[year][month], "tag_index.md") }}
+
+{% endfor %}
+{% endfor %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+{{ super() }}
+
+<script>(() => {
+{% if page.meta and page.meta.tags %}
+
+    let data = [
+        {% for tag in page.meta.tags %}
+        "{{ tag }}",
+        {% endfor %}
+    ];
+
+    inject_post_tags(data);
+
+{% endif %}
+
+    inject_post_date();
+})()</script>
+
+{% endblock %}

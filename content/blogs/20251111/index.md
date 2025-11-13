@@ -1,3 +1,9 @@
+---
+tags:
+  - Oneliner-Py
+  - 图论
+---
+
 # 优化continue
 
 上集说到，我们发现continue的作用是跳转到循环块的末尾。  

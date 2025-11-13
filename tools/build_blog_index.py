@@ -5,15 +5,26 @@ import os
 import re
 import warnings
 
+import frontmatter  # type: ignore
 import jinja2
 
 BLOGS_PATH = "content/blogs/"
-OUTPUT_PATH = "content/blogs/index.md"
-TEMPLATE_PATH = OUTPUT_PATH + ".in"
+TEMPLATE_PATH = "content/templates/"
+
+MAIN_INDEX_OUTPUT_PATH = BLOGS_PATH + "index.md"
+TAG_INDEX_OUTPUT_PATH = BLOGS_PATH + "tag_index.md"
+
+MAIN_INDEX_TEMPLATE_NAME = "index.md.jinja"
+TAG_INDEX_TEMPLATE_NAME = "tag_index.md.jinja"
+
 H1_PATTERN = re.compile(
     r"^#[^\S\r\n]+(?P<title>(\S+[^\S\r\n]*)+)\n",
     re.MULTILINE,
 )
+
+
+def slugify(string: str) -> str:
+    return string.lower().strip("-")
 
 
 @dataclasses.dataclass
@@ -21,6 +32,7 @@ class Data:
     name: str
     title: str | None
     date: datetime.datetime
+    tags: dict[str, str]
 
 
 posts: list[Data] = []
@@ -51,6 +63,8 @@ for name in os.listdir(BLOGS_PATH):
     with open(filename, encoding="utf8") as md_file:
         content = md_file.read()
 
+    metadata, content = frontmatter.parse(content)
+
     match = re.search(H1_PATTERN, content)
 
     if match:
@@ -59,22 +73,62 @@ for name in os.listdir(BLOGS_PATH):
         warnings.warn(f"'{filename}' title not found, using the default title")
         title = None
 
-    posts.append(Data(name, title, date))
+    tags = {}
+    if "tags" in metadata:
+        if isinstance(metadata["tags"], list):
+            for tag_name in metadata["tags"]:
+                if isinstance(tag_name, str):
+                    tag_slug = slugify(tag_name)
+                    tags[tag_slug] = tag_name
+                else:
+                    warnings.warn(
+                        f"Ignoring '{filename}' tags: invalid data type of values of 'tags'"
+                    )
+                    tags = {}
+                    break
+        else:
+            warnings.warn(f"Ignoring '{filename}' tags: invalid data type of 'tags'")
 
+    posts.append(Data(name, title, date, tags))
 
+# 按照日期排序，日期早的排名靠前
 sorted_posts = sorted(posts, key=lambda a: a.date, reverse=True)
 
-grouped_posts: dict[int, dict[int, list[Data]]] = {}
+grouped_by_timeline: dict[int, dict[int, list[Data]]] = {}
 for year, group_y in itertools.groupby(sorted_posts, key=lambda x: x.date.year):
     year_dict = {}
     for month, group_m in itertools.groupby(group_y, key=lambda x: x.date.month):
         year_dict[month] = list(group_m)
-    grouped_posts[year] = year_dict
+    grouped_by_timeline[year] = year_dict
 
-with open(TEMPLATE_PATH, encoding="utf8") as template_file:
-    template: jinja2.Template = jinja2.Template(template_file.read())
+grouped_by_tag: dict[str, tuple[str, list[Data]]] = {}
+for data in sorted_posts:
+    for tag_slug, tag_name in data.tags.items():
+        if tag_slug in grouped_by_tag:
+            grouped_by_tag[tag_slug][1].append(data)
+        else:
+            grouped_by_tag[tag_slug] = (tag_name, [data])
 
-result = template.render(grouped_posts=grouped_posts)
+# 按照tag的引用次数排序，引用次数最多的排名靠前
+grouped_by_tag = {
+    key: value
+    for key, value in sorted(
+        grouped_by_tag.items(), key=lambda a: len(a[1][1]), reverse=True
+    )
+}
 
-with open(OUTPUT_PATH, "w", encoding="utf8") as output_file:
+env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_PATH))
+
+main_index_template: jinja2.Template = env.get_template(MAIN_INDEX_TEMPLATE_NAME)
+
+result = main_index_template.render(grouped_posts=grouped_by_timeline)
+
+with open(MAIN_INDEX_OUTPUT_PATH, "w", encoding="utf8") as output_file:
+    output_file.write(result)
+
+tag_index_template: jinja2.Template = env.get_template(TAG_INDEX_TEMPLATE_NAME)
+
+result = tag_index_template.render(grouped_posts=grouped_by_tag)
+
+with open(TAG_INDEX_OUTPUT_PATH, "w", encoding="utf8") as output_file:
     output_file.write(result)

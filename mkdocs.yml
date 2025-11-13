@@ -6,6 +6,8 @@ docs_dir: content
 
 theme: 
   name: material
+  custom_dir: overrides
+
   features:
     # 支持一键复制代码
     - content.code.copy
@@ -25,6 +27,18 @@ plugins:
 extra_javascript:
   # 支持latex公式
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js
+
+  # 支持博客头部信息（标签和发布日期）
+  - inject_blog_header/inject_post_header.js
+
+extra_css:
+  # 支持博客头部信息
+  - inject_blog_header/inject_post_header.css
+
+# 监听overrides文件夹变化
+# （主要方便debug）
+watch:
+  - overrides
 
 markdown_extensions:
   # 支持在html标签里写markdown
@@ -53,3 +67,7 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  
+  # 支持行内配置html属性
+  # 我们自定义的tag系统依赖这个
+  - attr_list

@@ -1,0 +1,25 @@
+---
+title: 博客目录-按标签分类
+toc_depth: 1
+---
+{# 这是用于生成 blogs/tag_index.md 的jinja2模板。请忽略下一条注释。 -#}
+<!-- 
+    此文件由程序自动生成
+    由以下两个文件控制： 
+    - tools/build_blog_index.py
+    - content/templates/tag_index.md.jinja
+    
+    请勿直接修改此文件。
+-->
+
+# 博客目录
+
+{% from "list_posts.jinja" import list_posts %}
+
+{% for tag_slug, (tag_name, data_list) in grouped_posts.items() %}
+<span id="{{ tag_slug }}"></span>
+## {{ tag_name }}
+
+{{ list_posts(data_list, "") }}
+
+{% endfor %}
