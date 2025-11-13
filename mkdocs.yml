@@ -67,3 +67,7 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  
+  # 支持行内配置html属性
+  # 我们自定义的tag系统依赖这个
+  - attr_list

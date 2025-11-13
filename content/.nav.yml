@@ -3,5 +3,5 @@ nav:
   - 博客:
     - 博客目录: 
       - 按时间: blogs/index.md
-      - 按标签: blogs/tags.md
+      - 按标签: blogs/tag_index.md
     - 文章列表: blogs/

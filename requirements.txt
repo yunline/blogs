@@ -1,4 +1,6 @@
 mkdocs
 mkdocs-material
 mkdocs-awesome-nav
+python-frontmatter
+python-slugify
 jinja2

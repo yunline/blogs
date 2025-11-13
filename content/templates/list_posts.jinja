@@ -1,0 +1,20 @@
+{% macro list_posts(data_list, link_base_path) %}
+{% for data in data_list %}
+
+{% if data.title is defined and data.title is none -%}
+    {% set title = "无标题" -%}
+{% else -%}
+    {% set title = data.title -%}
+{% endif -%}
+
+---
+
+### [{{ title }}]({{ data.name }}/index.md)  
+
+{% for tag_slug, tga_name in data.tags.items() -%}
+[{{ tga_name }}]({{ link_base_path }}/tag_index#{{ tag_slug }}){ .md-tag}
+{% endfor %}  
+*:material-clock-time-four-outline: {{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*
+
+{% endfor %}
+{% endmacro %}
