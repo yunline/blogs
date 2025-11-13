@@ -5,10 +5,8 @@ import os
 import re
 import warnings
 
-import frontmatter # type: ignore
+import frontmatter  # type: ignore
 import jinja2
-
-from slugify import slugify
 
 BLOGS_PATH = "content/blogs/"
 TEMPLATE_PATH = "content/templates/"
@@ -25,12 +23,17 @@ H1_PATTERN = re.compile(
 )
 
 
+def slugify(string: str) -> str:
+    return string.lower().strip("-")
+
+
 @dataclasses.dataclass
 class Data:
     name: str
     title: str | None
     date: datetime.datetime
     tags: dict[str, str]
+
 
 posts: list[Data] = []
 
@@ -69,16 +72,18 @@ for name in os.listdir(BLOGS_PATH):
     else:
         warnings.warn(f"'{filename}' title not found, using the default title")
         title = None
-    
+
     tags = {}
     if "tags" in metadata:
         if isinstance(metadata["tags"], list):
             for tag_name in metadata["tags"]:
                 if isinstance(tag_name, str):
-                    tag_slug = slugify(tag_name, allow_unicode=True)
+                    tag_slug = slugify(tag_name)
                     tags[tag_slug] = tag_name
                 else:
-                    warnings.warn(f"Ignoring '{filename}' tags: invalid data type of values of 'tags'")
+                    warnings.warn(
+                        f"Ignoring '{filename}' tags: invalid data type of values of 'tags'"
+                    )
                     tags = {}
                     break
         else:
@@ -103,7 +108,7 @@ for data in sorted_posts:
         else:
             grouped_by_tag[tag_slug] = (tag_name, [data])
 
-env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_PATH))         
+env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_PATH))
 
 main_index_template: jinja2.Template = env.get_template(MAIN_INDEX_TEMPLATE_NAME)
 

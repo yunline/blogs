@@ -1,3 +1,9 @@
+function slugify(text) {
+    return text
+        .toLowerCase() // 全小写
+        .replace(/^-|-$/g, ''); // 移除开头和结尾的连字符
+}
+
 
 function get_inject_post_header_div() {
     header = document.querySelector('div.inj-post-header');
@@ -50,7 +56,7 @@ function inject_post_tags(tags_data) {
     let tag_html_array = new Array();
 
     for(tag of tags_data) {
-        tag_html_array.push(`<a class="md-tag" href="#">${tag}</a>`);
+        tag_html_array.push(`<a class="md-tag" href="../tag_index#${slugify(tag)}">${tag}</a>`);
     }
 
     const custom_html = `<p class="inj-post-header-tags">${tag_html_array.join(" ")}</p>`;
