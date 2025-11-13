@@ -24,7 +24,7 @@ plugins:
   
 extra_javascript:
   # 支持latex公式
-  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js
 
 markdown_extensions:
   # 支持在html标签里写markdown
