@@ -1,0 +1,18 @@
+div.inj-post-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+div.inj-post-header .inj-post-header-tags {
+    flex: 1;
+    min-width: 200px;
+    margin: 0;
+}
+
+div.inj-post-header .inj-post-header-date {
+    align-self: flex-start;
+    margin-left: auto;
+    color: var(--md-default-fg-color--light);
+}
