@@ -29,7 +29,7 @@ function get_inject_post_header_div() {
 function inject_post_date() {
     let path = window.location.pathname;
     let path_segments = path.split("/");
-    if (path_segments[path_segments.length - 3] !== "blogs") {
+    if (path_segments[path_segments.length - 3] !== "posts") {
         return;
     }
 

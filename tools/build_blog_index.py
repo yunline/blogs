@@ -8,7 +8,7 @@ import warnings
 import frontmatter  # type: ignore
 import jinja2
 
-BLOGS_PATH = "content/blogs/"
+BLOGS_PATH = "content/posts/"
 TEMPLATE_PATH = "content/templates/"
 
 MAIN_INDEX_OUTPUT_PATH = BLOGS_PATH + "index.md"
