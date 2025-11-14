@@ -53,7 +53,7 @@
             tag_html_array.push(`<a class="md-tag" href="../../tag_index#${slugify(tag)}">${tag}</a>`);
         }
 
-        const custom_html = `<p class="inj-post-header-tags">${tag_html_array.join(" ")}</p>`;
+        const custom_html = `<div class="inj-post-header-tags">${tag_html_array.join(" ")}</div>`;
 
         header_div.innerHTML += custom_html;
     }

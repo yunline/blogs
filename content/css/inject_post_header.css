@@ -3,6 +3,7 @@ div.inj-post-header {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
+    line-height: 2.25;
 }
 
 div.inj-post-header .inj-post-header-tags {
