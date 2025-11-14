@@ -11,10 +11,10 @@ import jinja2
 BLOGS_PATH = "content/posts/"
 TEMPLATE_PATH = "content/templates/"
 
-MAIN_INDEX_OUTPUT_PATH = BLOGS_PATH + "index.md"
-TAG_INDEX_OUTPUT_PATH = BLOGS_PATH + "tag_index.md"
+MAIN_INDEX_OUTPUT_PATH = "content/post_index.md"
+TAG_INDEX_OUTPUT_PATH = "content/tag_index.md"
 
-MAIN_INDEX_TEMPLATE_NAME = "index.md.jinja"
+MAIN_INDEX_TEMPLATE_NAME = "post_index.md.jinja"
 TAG_INDEX_TEMPLATE_NAME = "tag_index.md.jinja"
 
 H1_PATTERN = re.compile(

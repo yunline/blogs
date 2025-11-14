@@ -1,4 +1,4 @@
-{% macro list_posts(data_list, link_base_path) %}
+{% macro list_posts(data_list) %}
 {% for data in data_list %}
 
 {% if data.title is defined and data.title is none -%}
@@ -9,10 +9,10 @@
 
 ---
 
-### [{{ title }}]({{ data.name }}/index.md)  
+### [{{ title }}](posts/{{ data.name }}/index.md)  
 
 {% for tag_slug, tga_name in data.tags.items() -%}
-[{{ tga_name }}]({{ link_base_path }}#{{ tag_slug }}){ .md-tag}
+[{{ tga_name }}](tag_index.md#{{ tag_slug }}){ .md-tag}
 {% endfor %}  
 <span style="color: var(--md-default-fg-color--light);">
 *:material-clock-time-four-outline: {{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*

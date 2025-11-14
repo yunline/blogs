@@ -1,7 +1,7 @@
 ---
 title: 博客目录-按时间分类
 ---
-{# 这是用于生成 posts/index.md 的jinja2模板。请忽略下一条注释。 #}
+{# 这是用于生成 posts_index.md 的jinja2模板。请忽略下一条注释。 #}
 <!-- 
     此文件由程序自动生成
     由以下两个文件控制： 
@@ -22,7 +22,7 @@ title: 博客目录-按时间分类
 {{ month }}月
 ---
 
-{{ list_posts(grouped_posts[year][month], "tag_index.md") }}
+{{ list_posts(grouped_posts[year][month]) }}
 
 {% endfor %}
 {% endfor %}

@@ -2,6 +2,6 @@ nav:
   - 主页: index.md
   - 博客:
     - 博客目录: 
-      - 按时间: posts/index.md
-      - 按标签: posts/tag_index.md
+      - 按时间: post_index.md
+      - 按标签: tag_index.md
     - 文章列表: posts/
