@@ -42,8 +42,14 @@
 
     function slugify(text) {
         return text
-            .toLowerCase() // 全小写
-            .replace(/^-|-$/g, ''); // 移除开头和结尾的连字符
+            // 全小写
+            .toLowerCase()
+
+            // 将敏感字符替换为横杠
+            .replace(/[\\/\s\#\?&=%\+]/g, '-')
+            
+            // 移除开头和结尾的连字符
+            .replace(/^-+|-+$/g, '');
     }
 
     function inject_post_tags(header_div, tags) {

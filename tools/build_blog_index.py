@@ -23,8 +23,17 @@ H1_PATTERN = re.compile(
 )
 
 
-def slugify(string: str) -> str:
-    return string.lower().strip("-")
+def slugify(s: str) -> str:
+    # 全小写
+    s = s.lower()
+
+    # 将敏感字符替换为横杠
+    s = re.sub(r"[\\/\s\#\?&=%\+]", "-", s)
+
+    # 移除开头和结尾的连字符
+    s = s.strip("-")
+
+    return s
 
 
 @dataclasses.dataclass
