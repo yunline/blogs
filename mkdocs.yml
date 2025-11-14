@@ -1,4 +1,4 @@
-site_name: Blogs
+site_name: 博客
 site_url: !ENV [SITE_URL, 'http://localhost:8000']
 repo_url: https://github.com/yunline/blogs
 
@@ -71,3 +71,7 @@ markdown_extensions:
   # 支持行内配置html属性
   # 我们自定义的tag系统依赖这个
   - attr_list
+
+  - toc:
+      # 指定toc标题所显示的文本
+      title: 目录
