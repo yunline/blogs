@@ -15,8 +15,14 @@ theme:
     # 支撑toc跟随滚动
     - toc.follow
 
-    # 配置导航栏
+    # 支持即时加载，显示加载进度条
+    - navigation.instant
+    - navigation.instant.progress
+
+    # 将导航栏第一级放在顶部tab
     - navigation.tabs
+    
+    # 默认展开所有导航栏
     - navigation.expand
   
 plugins:
@@ -26,14 +32,15 @@ plugins:
   
 extra_javascript:
   # 支持latex公式
-  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js
+  - js/config_mathjax.js
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js
 
   # 支持博客头部信息（标签和发布日期）
-  - inject_blog_header/inject_post_header.js
+  - js/inject_post_header.js
 
 extra_css:
   # 支持博客头部信息
-  - inject_blog_header/inject_post_header.css
+  - css/inject_post_header.css
 
 # 监听overrides文件夹变化
 # （主要方便debug）

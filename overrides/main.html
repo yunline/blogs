@@ -1,22 +1,15 @@
 {% extends "base.html" %}
 
-{% block scripts %}
+{% block content %}
+
+<div 
+    id="inj-post-header-data-div"
+    style="display: none;"
+    {% if page.meta and page.meta.tags %}
+    data-tags='{{ page.meta.tags | tojson }}'
+    {% endif %}
+></div>
+
 {{ super() }}
-
-<script>(() => {
-{% if page.meta and page.meta.tags %}
-
-    let data = [
-        {% for tag in page.meta.tags %}
-        "{{ tag }}",
-        {% endfor %}
-    ];
-
-    inject_post_tags(data);
-
-{% endif %}
-
-    inject_post_date();
-})()</script>
 
 {% endblock %}
