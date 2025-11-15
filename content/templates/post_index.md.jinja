@@ -1,7 +1,7 @@
 ---
 title: 博客目录
 ---
-{# 这是用于生成 posts_index.md 的jinja2模板。请忽略下一条注释。 #}
+{# 这是用于生成 posts_index.md 的jinja2模板。请忽略下一条注释。 -#}
 <!-- 
     此文件由程序自动生成
     由以下两个文件控制： 
@@ -11,18 +11,17 @@ title: 博客目录
     请勿直接修改此文件。
 -->
 
-{% from "list_posts.jinja" import list_posts %}
+{% from "list_posts.jinja" import list_posts -%}
 
 # 博客目录
 
-{% for year in grouped_posts %}
-{{ year }}年
----
-{% for month in grouped_posts[year] %}
-{{ month }}月
----
+{% for year in grouped_posts -%}
+## {{ year }}年
+
+{% for month in grouped_posts[year] -%}
+## {{ month }}月
 
 {{ list_posts(grouped_posts[year][month], "posts/", "tags/") }}
 
-{% endfor %}
-{% endfor %}
+{% endfor -%}
+{% endfor -%}

@@ -1,5 +1,5 @@
-{% macro list_posts(data_list, posts_base_path, tags_base_path) %}
-{% for data in data_list %}
+{% macro list_posts(data_list, posts_base_path, tags_base_path) -%}
+{% for data in data_list -%}
 
 {% if data.title is defined and data.title is none -%}
     {% set title = "无标题" -%}
@@ -8,7 +8,6 @@
 {% endif -%}
 
 ---
-
 ### [{{ title }}]({{ posts_base_path }}{{ data.name }}/index.md)  
 
 {% for tag_slug, tga_name in data.tags.items() -%}
@@ -18,5 +17,5 @@
 *:material-clock-time-four-outline: {{ data.date.year }}-{{ data.date.month }}-{{ data.date.day }}*
 </span>
 
-{% endfor %}
+{% endfor -%}
 {% endmacro %}
