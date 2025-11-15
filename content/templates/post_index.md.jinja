@@ -1,5 +1,5 @@
 ---
-title: 博客目录-按时间分类
+title: 博客目录
 ---
 {# 这是用于生成 posts_index.md 的jinja2模板。请忽略下一条注释。 #}
 <!-- 
@@ -22,7 +22,7 @@ title: 博客目录-按时间分类
 {{ month }}月
 ---
 
-{{ list_posts(grouped_posts[year][month]) }}
+{{ list_posts(grouped_posts[year][month], "posts/", "tags/") }}
 
 {% endfor %}
 {% endfor %}

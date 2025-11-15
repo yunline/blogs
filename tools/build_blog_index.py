@@ -14,9 +14,11 @@ TEMPLATE_PATH = "content/templates/"
 
 MAIN_INDEX_OUTPUT_PATH = "content/post_index.md"
 TAG_INDEX_OUTPUT_PATH = "content/tag_index.md"
+TAG_PAGE_OUTPUT_PATH = "content/tags"
 
 MAIN_INDEX_TEMPLATE_NAME = "post_index.md.jinja"
 TAG_INDEX_TEMPLATE_NAME = "tag_index.md.jinja"
+TAG_PAGE_TEMPLATE_NAME = "tag_page.md.jinja"
 
 H1_PATTERN = re.compile(
     r"^#[^\S\r\n]+(?P<title>(\S+[^\S\r\n]*)+)\n",
@@ -160,10 +162,33 @@ def build_tag_index(tags: TagIndexType, jinja_env: jinja2.Environment):
     tag_index_template: jinja2.Template
     tag_index_template = jinja_env.get_template(TAG_INDEX_TEMPLATE_NAME)
 
-    result = tag_index_template.render(grouped_posts=tags)
+    result = tag_index_template.render(tag_index=tags)
 
     with open(TAG_INDEX_OUTPUT_PATH, "w", encoding="utf8") as output_file:
         output_file.write(result)
+
+
+def build_tag(tags: TagIndexType, jinja_env: jinja2.Environment):
+    if not os.path.exists(TAG_PAGE_OUTPUT_PATH):
+        os.mkdir(TAG_PAGE_OUTPUT_PATH)
+    elif os.path.isfile(TAG_PAGE_OUTPUT_PATH):
+        warnings.warn(
+            f"Unable to create path '{TAG_PAGE_OUTPUT_PATH}': "
+            f"path name occupied by a file"
+        )
+        return
+
+    template: jinja2.Template
+    template = jinja_env.get_template(TAG_PAGE_TEMPLATE_NAME)
+
+    for tag_slug, (tag_name, data_list) in tags.items():
+        tag_path = os.path.join(TAG_PAGE_OUTPUT_PATH, f"{tag_slug}.md")
+        result = template.render(
+            tag_name=tag_name,
+            data_list=data_list,
+        )
+        with open(tag_path, "w", encoding="utf8") as output_file:
+            output_file.write(result)
 
 
 if __name__ == "__main__":
@@ -177,3 +202,4 @@ if __name__ == "__main__":
     # 生成目录
     build_main_index(posts, env)
     build_tag_index(tags, env)
+    build_tag(tags, env)

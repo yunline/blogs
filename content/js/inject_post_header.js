@@ -56,7 +56,7 @@
         let tag_html_array = new Array();
 
         for(tag of tags) {
-            tag_html_array.push(`<a class="md-tag" href="../../tag_index#${slugify(tag)}">${tag}</a>`);
+            tag_html_array.push(`<a class="md-tag" href="../../tags/${slugify(tag)}">${tag}</a>`);
         }
 
         const custom_html = `<div class="inj-post-header-tags">${tag_html_array.join(" ")}</div>`;
