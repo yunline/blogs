@@ -11,14 +11,29 @@ title: 标签目录
     请勿直接修改此文件。
 -->
 
+<style>
+div#tag_index_div {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 26em;
+}
+
+div#tag_index_div p {
+    margin-top: 0;
+}
+</style>
+
 # 标签目录
 
-{% for tag_slug, (tag_name, data_list) in tag_index.items() %}
+<div markdown="1" id="tag_index_div">
+{% for tag_slug, (tag_name, data_list) in tag_index.items() -%}
+{% set last_update = data_list[0].date %}
 
-[:material-tag-outline: {{ tag_name }}](tags/{{ tag_slug }}.md)
+[:material-tag-outline: {{ tag_name }}](tags/{{ tag_slug }}.md)  
 <span style="color: var(--md-default-fg-color--light);">
-:material-text-box-outline: {{ data_list | length }}
+&emsp;:material-note-text-outline: {{ data_list | length }}
+&ensp;:material-clock-time-five-outline: {{ last_update.year }}-{{ last_update.month }}
 </span>
 
-{% endfor %}
-
+{%- endfor %}
+</div>
