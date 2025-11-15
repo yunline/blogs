@@ -1,6 +1,7 @@
 ---
 tags:
   - Oneliner-Py
+  - Python
   - 图论
 ---
 

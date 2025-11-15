@@ -1,5 +1,7 @@
 ---
-tags: ["tkinter"]
+tags:
+  - Python
+  - tkinter
 ---
 
 # 关于tkinter接口与引用计数的讨论

@@ -1,6 +1,7 @@
 ---
 tags:
   - Oneliner-Py
+  - Python
 ---
 
 # Oneliner 分支优化

@@ -1,6 +1,7 @@
 ---
 tags:
   - Oneliner-Py
+  - Python
 ---
 
 # Oneliner-Py 结构解析pass
