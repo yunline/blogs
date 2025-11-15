@@ -3,6 +3,7 @@ import datetime
 import itertools
 import os
 import re
+import typing
 import warnings
 
 import frontmatter  # type: ignore
@@ -22,13 +23,15 @@ H1_PATTERN = re.compile(
     re.MULTILINE,
 )
 
+SLUGIFY_PATTERN = re.compile(r"[\\/\s\#\?&=%\+]")
+
 
 def slugify(s: str) -> str:
     # 全小写
     s = s.lower()
 
     # 将敏感字符替换为横杠
-    s = re.sub(r"[\\/\s\#\?&=%\+]", "-", s)
+    s = re.sub(SLUGIFY_PATTERN, "-", s)
 
     # 移除开头和结尾的连字符
     s = s.strip("-")
@@ -37,107 +40,140 @@ def slugify(s: str) -> str:
 
 
 @dataclasses.dataclass
-class Data:
+class PostData:
     name: str
     title: str | None
     date: datetime.datetime
     tags: dict[str, str]
 
 
-posts: list[Data] = []
+def collect_post_data() -> list[PostData]:
+    posts: list[PostData] = []
 
-for name in os.listdir(BLOGS_PATH):
-    path = os.path.join(BLOGS_PATH, name)
-    if not os.path.isdir(path):
-        continue
-    try:
-        # 文件夹命名格式: "yyyymmdd[-后缀]"
-        # 中括号内的后缀为可选项，这样如果一天有多个post，便得以区分
-        date_str = name.split("-")[0]
-        date = datetime.datetime.strptime(date_str, "%Y%m%d")
-    except ValueError:
-        warnings.warn(
-            f"Ignoring '{path}' because of invalid date format. 'yyyymmdd[-suffix]' expected"
+    for name in os.listdir(BLOGS_PATH):
+        path = os.path.join(BLOGS_PATH, name)
+        if not os.path.isdir(path):
+            continue
+        try:
+            # 文件夹命名格式: "yyyymmdd[-后缀]"
+            # 中括号内的后缀为可选项，这样如果一天有多个post，便得以区分
+            date_str = name.split("-")[0]
+            date = datetime.datetime.strptime(date_str, "%Y%m%d")
+        except ValueError:
+            warnings.warn(
+                f"Ignoring '{path}' because of invalid date format. 'yyyymmdd[-suffix]' expected"
+            )
+            continue
+
+        filename = os.path.join(path, "index.md")
+        if not os.path.exists(filename):
+            warnings.warn(f"Ignoring '{path}' because index.md doesn't exist")
+            continue
+        if not os.path.isfile(filename):
+            warnings.warn(f"Ignoring '{path}' because index.md is not a file")
+            continue
+
+        with open(filename, encoding="utf8") as md_file:
+            content = md_file.read()
+
+        metadata, content = frontmatter.parse(content)
+
+        match = re.search(H1_PATTERN, content)
+
+        if match:
+            title = match.groupdict()["title"]
+        else:
+            warnings.warn(f"'{filename}' title not found, using the default title")
+            title = None
+
+        tags = {}
+        if "tags" in metadata:
+            if isinstance(metadata["tags"], list):
+                for tag_name in metadata["tags"]:
+                    if isinstance(tag_name, str):
+                        tag_slug = slugify(tag_name)
+                        tags[tag_slug] = tag_name
+                    else:
+                        warnings.warn(
+                            f"Ignoring '{filename}' tags: invalid data type of values of 'tags'"
+                        )
+                        tags = {}
+                        break
+            else:
+                warnings.warn(
+                    f"Ignoring '{filename}' tags: invalid data type of 'tags'"
+                )
+
+        posts.append(PostData(name, title, date, tags))
+
+    # 按时间排序，时间越晚，排名越靠前
+    posts = sorted(posts, key=lambda a: a.date, reverse=True)
+
+    return posts
+
+
+TagIndexType: typing.TypeAlias = dict[str, tuple[str, list[PostData]]]
+
+
+def collect_tags(posts: list[PostData]) -> TagIndexType:
+    tags: TagIndexType = {}
+
+    # 按tag分组
+    for data in posts:
+        for tag_slug, tag_name in data.tags.items():
+            if tag_slug in tags:
+                tags[tag_slug][1].append(data)
+            else:
+                tags[tag_slug] = (tag_name, [data])
+
+    # 按照tag的引用次数排序，引用次数最多的排名靠前
+    tags = {
+        key: value
+        for key, value in sorted(
+            tags.items(),
+            key=lambda a: len(a[1][1]),
+            reverse=True,
         )
-        continue
+    }
 
-    filename = os.path.join(path, "index.md")
-    if not os.path.exists(filename):
-        warnings.warn(f"Ignoring '{path}' because index.md doesn't exist")
-        continue
-    if not os.path.isfile(filename):
-        warnings.warn(f"Ignoring '{path}' because index.md is not a file")
-        continue
+    return tags
 
-    with open(filename, encoding="utf8") as md_file:
-        content = md_file.read()
 
-    metadata, content = frontmatter.parse(content)
+def build_main_index(posts: list[PostData], jinja_env: jinja2.Environment):
+    grouped_by_timeline: dict[int, dict[int, list[PostData]]] = {}
+    for year, group_y in itertools.groupby(posts, key=lambda x: x.date.year):
+        year_dict = {}
+        for month, group_m in itertools.groupby(group_y, key=lambda x: x.date.month):
+            year_dict[month] = list(group_m)
+        grouped_by_timeline[year] = year_dict
 
-    match = re.search(H1_PATTERN, content)
+    main_index_template: jinja2.Template
+    main_index_template = jinja_env.get_template(MAIN_INDEX_TEMPLATE_NAME)
 
-    if match:
-        title = match.groupdict()["title"]
-    else:
-        warnings.warn(f"'{filename}' title not found, using the default title")
-        title = None
+    result = main_index_template.render(grouped_posts=grouped_by_timeline)
 
-    tags = {}
-    if "tags" in metadata:
-        if isinstance(metadata["tags"], list):
-            for tag_name in metadata["tags"]:
-                if isinstance(tag_name, str):
-                    tag_slug = slugify(tag_name)
-                    tags[tag_slug] = tag_name
-                else:
-                    warnings.warn(
-                        f"Ignoring '{filename}' tags: invalid data type of values of 'tags'"
-                    )
-                    tags = {}
-                    break
-        else:
-            warnings.warn(f"Ignoring '{filename}' tags: invalid data type of 'tags'")
+    with open(MAIN_INDEX_OUTPUT_PATH, "w", encoding="utf8") as output_file:
+        output_file.write(result)
 
-    posts.append(Data(name, title, date, tags))
 
-# 按照日期排序，日期早的排名靠前
-sorted_posts = sorted(posts, key=lambda a: a.date, reverse=True)
+def build_tag_index(tags: TagIndexType, jinja_env: jinja2.Environment):
+    tag_index_template: jinja2.Template
+    tag_index_template = jinja_env.get_template(TAG_INDEX_TEMPLATE_NAME)
 
-grouped_by_timeline: dict[int, dict[int, list[Data]]] = {}
-for year, group_y in itertools.groupby(sorted_posts, key=lambda x: x.date.year):
-    year_dict = {}
-    for month, group_m in itertools.groupby(group_y, key=lambda x: x.date.month):
-        year_dict[month] = list(group_m)
-    grouped_by_timeline[year] = year_dict
+    result = tag_index_template.render(grouped_posts=tags)
 
-grouped_by_tag: dict[str, tuple[str, list[Data]]] = {}
-for data in sorted_posts:
-    for tag_slug, tag_name in data.tags.items():
-        if tag_slug in grouped_by_tag:
-            grouped_by_tag[tag_slug][1].append(data)
-        else:
-            grouped_by_tag[tag_slug] = (tag_name, [data])
+    with open(TAG_INDEX_OUTPUT_PATH, "w", encoding="utf8") as output_file:
+        output_file.write(result)
 
-# 按照tag的引用次数排序，引用次数最多的排名靠前
-grouped_by_tag = {
-    key: value
-    for key, value in sorted(
-        grouped_by_tag.items(), key=lambda a: len(a[1][1]), reverse=True
-    )
-}
 
-env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_PATH))
+if __name__ == "__main__":
+    # 收集数据
+    posts = collect_post_data()
+    tags = collect_tags(posts)
 
-main_index_template: jinja2.Template = env.get_template(MAIN_INDEX_TEMPLATE_NAME)
+    # 初始化jinja环境
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_PATH))
 
-result = main_index_template.render(grouped_posts=grouped_by_timeline)
-
-with open(MAIN_INDEX_OUTPUT_PATH, "w", encoding="utf8") as output_file:
-    output_file.write(result)
-
-tag_index_template: jinja2.Template = env.get_template(TAG_INDEX_TEMPLATE_NAME)
-
-result = tag_index_template.render(grouped_posts=grouped_by_tag)
-
-with open(TAG_INDEX_OUTPUT_PATH, "w", encoding="utf8") as output_file:
-    output_file.write(result)
+    # 生成目录
+    build_main_index(posts, env)
+    build_tag_index(tags, env)
